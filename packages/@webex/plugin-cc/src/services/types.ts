@@ -1,4 +1,5 @@
 import {LoginOption} from '../types';
+import {AgentDesktopMessage, AgentLogoutSuccessEvent} from './constants';
 
 type Enum<T extends Record<string, unknown>> = T[keyof T];
 
@@ -225,7 +226,19 @@ export type AuxCode = {
  *
  * @public
  */
-
-export type ListAuxCodesResponse = {
+export interface ListAuxCodesResponse {
   data: AuxCode[];
-};
+}
+
+export interface LogoutSuccess {
+  eventType: typeof AgentDesktopMessage;
+  agentId: string;
+  trackingId: string;
+  agentSessionId: string;
+  orgId: string;
+  status: string;
+  subStatus: string;
+  loggedOutBy?: string;
+  roles?: string[];
+  type: typeof AgentLogoutSuccessEvent;
+}

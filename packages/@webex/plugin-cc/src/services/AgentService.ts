@@ -1,7 +1,14 @@
 import {WebexSDK, HTTP_METHODS} from '../types';
-import {LOGIN_API, WCC_API_GATEWAY} from './constants';
 import HttpRequest from './HttpRequest';
-import {StationLoginSuccess, UserStationLogin} from './types';
+import {LogoutSuccess, StationLoginSuccess, UserStationLogin} from './types';
+import {
+  AgentLogoutFailedEvent,
+  AgentLogoutSuccessEvent,
+  LOGIN_API,
+  LOGOUT_API,
+  LOGOUT_EVENT,
+  WCC_API_GATEWAY,
+} from './constants';
 
 export default class AgentService {
   private webex: WebexSDK;
@@ -38,6 +45,30 @@ export default class AgentService {
       this.webex.logger.error(`Error during station login: ${error}`);
 
       throw error;
+    }
+  }
+
+  public async stationLogout(options: {logoutReason: string}): Promise<LogoutSuccess> {
+    try {
+      const {logoutReason} = options;
+      const payload = {
+        logoutReason,
+      };
+      const data = await this.httpRequest.sendRequestWithEvent({
+        service: WCC_API_GATEWAY,
+        resource: LOGOUT_API,
+        method: HTTP_METHODS.PUT,
+        payload,
+        eventType: LOGOUT_EVENT,
+        success: [AgentLogoutSuccessEvent],
+        failure: [AgentLogoutFailedEvent],
+      });
+
+      return data;
+    } catch (error) {
+      this.webex.logger.error(`Error during station logout: ${error}`);
+
+      return Promise.reject(error);
     }
   }
 }

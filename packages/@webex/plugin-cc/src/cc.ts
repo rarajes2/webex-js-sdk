@@ -13,6 +13,7 @@ import {READY, CC_FILE} from './constants';
 import HttpRequest from './services/HttpRequest';
 import WebCallingService from './WebCallingService';
 import {AgentLogin} from './services/types';
+import {AgentLoginRequest, LogoutSuccess} from './services/types';
 import Agent from './features/Agent';
 
 export default class ContactCenter extends WebexPlugin implements IContactCenter {
@@ -117,5 +118,27 @@ export default class ContactCenter extends WebexPlugin implements IContactCenter
     await loginResponse;
 
     return loginResponse;
+  }
+
+  /**
+   * This is used for agent logout.
+   * @param options
+   * @returns Promise<LogoutSuccess>
+   * @throws Error
+   */
+  public async stationLogout(options: {logoutReason: string}): Promise<LogoutSuccess> {
+    try {
+      const response = await this.agent.stationLogout(options);
+
+      if (this.webCallingService) {
+        this.webCallingService.deregisterWebCallingLine();
+      }
+
+      return response;
+    } catch (error) {
+      this.$webex.logger.error('LOGOUT API FAILED');
+
+      return Promise.reject(new Error('Error while performing agent logout', error.message));
+    }
   }
 }

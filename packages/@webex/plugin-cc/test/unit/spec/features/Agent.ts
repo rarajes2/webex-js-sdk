@@ -159,4 +159,29 @@ describe('Agent', () => {
     expect(webexMock.logger.log).toHaveBeenCalledWith('Station Login Success');
     expect(response).toEqual(loginResponse);
   });
+
+  describe('#stationLogout', () => {
+    it('should successfully log out the agent', async () => {
+      const options = { logoutReason: 'End of shift' };
+  
+      const logoutResponse = { success: true };
+      agentServiceMock.stationLogout.mockResolvedValue(logoutResponse);
+  
+      const result = await agent.stationLogout(options);
+  
+      expect(result).toBe(logoutResponse);
+      expect(agentServiceMock.stationLogout).toHaveBeenCalledWith(options);
+      expect(webex.logger.log).toHaveBeenCalledWith('Logout API SUCCESS');
+    });
+  
+    it('should handle logout error', async () => {
+      const options = { logoutReason: 'End of shift' };
+  
+      const error = new Error('Logout failed');
+      agentServiceMock.stationLogout.mockRejectedValue(error);
+  
+      await expect(agent.stationLogout(options)).rejects.toThrow('Error while performing agent Logout');
+      expect(agentServiceMock.stationLogout).toHaveBeenCalledWith(options);
+    });
+  });
 });
