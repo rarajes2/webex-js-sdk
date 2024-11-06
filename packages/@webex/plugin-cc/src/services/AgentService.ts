@@ -1,7 +1,14 @@
 import {WebexSDK, HTTP_METHODS} from '../types';
-import {LOGIN_API, WCC_API_GATEWAY} from './constants';
+import {
+  AGENT_RE_LOGIN_FAILED,
+  AGENT_RE_LOGIN_SUCCESS,
+  LOGIN_API,
+  RE_LOGIN_API,
+  STATION_RE_LOGIN,
+  WCC_API_GATEWAY,
+} from './constants';
 import HttpRequest from './HttpRequest';
-import {StationLoginSuccess, UserStationLogin} from './types';
+import {StationLoginSuccess, StationReLoginResponse, UserStationLogin} from './types';
 
 export default class AgentService {
   private webex: WebexSDK;
@@ -36,6 +43,28 @@ export default class AgentService {
       return response;
     } catch (error) {
       this.webex.logger.error(`Error during station login: ${error}`);
+
+      throw error;
+    }
+  }
+
+  public async stationReLogin(): Promise<StationReLoginResponse> {
+    try {
+      const response = await this.httpRequest.sendRequestWithEvent({
+        service: WCC_API_GATEWAY,
+        resource: RE_LOGIN_API,
+        method: HTTP_METHODS.POST,
+        payload: {},
+        eventType: STATION_RE_LOGIN,
+        success: [AGENT_RE_LOGIN_SUCCESS],
+        failure: [AGENT_RE_LOGIN_FAILED],
+      });
+
+      this.webex.logger.log('Station re-login success');
+
+      return response;
+    } catch (error) {
+      this.webex.logger.error(`Error during station re-login: ${error}`);
 
       throw error;
     }

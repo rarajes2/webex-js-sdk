@@ -2,6 +2,7 @@ import {LoginOption, WebexSDK} from '../types';
 import HttpRequest from '../services/HttpRequest';
 import AgentService from '../services/AgentService';
 import {AgentLogin} from '../services/types';
+import {StationReLoginResponse} from '../services/types';
 import {StationLoginResponse} from './types';
 import {AGENT, WEB_RTC_PREFIX} from '../services/constants';
 
@@ -36,5 +37,9 @@ export default class Agent {
     this.webex.logger.log('Station Login Success');
 
     return loginResponse;
+  }
+
+  public async stationReLogin(): Promise<StationReLoginResponse> {
+    return this.agentService.stationReLogin();
   }
 }

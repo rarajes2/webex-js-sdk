@@ -13,6 +13,7 @@ import {READY, CC_FILE} from './constants';
 import HttpRequest from './services/HttpRequest';
 import WebCallingService from './WebCallingService';
 import {AgentLogin} from './services/types';
+import {StationReLoginResponse} from './services/types';
 import Agent from './features/Agent';
 
 export default class ContactCenter extends WebexPlugin implements IContactCenter {
@@ -117,5 +118,14 @@ export default class ContactCenter extends WebexPlugin implements IContactCenter
     await loginResponse;
 
     return loginResponse;
+  }
+
+  /**
+   * Re-Login to the station.
+   * @returns {Promise<StationLoginSuccess>} A promise that resolves when the re-login is successful.
+   * @throws Will throw an error if the re-login fails.
+   */
+  public async stationReLogin(): Promise<StationReLoginResponse> {
+    return this.agent.stationReLogin();
   }
 }

@@ -229,3 +229,5 @@ export type AuxCode = {
 export type ListAuxCodesResponse = {
   data: AuxCode[];
 };
+
+export type StationReLoginResponse = StationLoginSuccess | Error;
