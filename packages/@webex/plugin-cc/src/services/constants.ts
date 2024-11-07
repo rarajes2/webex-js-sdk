@@ -12,5 +12,5 @@ export const WEB_RTC_PREFIX = 'webrtc-';
 export const AgentDesktopMessage = 'AgentDesktopMessage';
 
 export const LOGOUT_EVENT = 'Logout';
-export const AgentLogoutSuccessEvent = 'AgentLogoutSuccess';
-export const AgentLogoutFailedEvent = 'AgentLogoutFailed';
+export const AGENT_LOGOUT_SUCCESS_EVENT = 'AgentLogoutSuccess';
+export const AGENT_LOGOUT_FAILED_EVENT = 'AgentLogoutFailed';

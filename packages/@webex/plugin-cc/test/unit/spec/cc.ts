@@ -5,7 +5,7 @@ import Agent from '../../../src/features/Agent';
 import WebCallingService from '../../../src/WebCallingService';
 import ContactCenter from '../../../src/cc';
 import MockWebex from '@webex/test-helper-mock-webex';
-import {StationLoginSuccess} from '../../../src/services/types';
+import {StationLoginSuccess, StationLogoutSuccess} from '../../../src/services/types';
 import {IAgentProfile} from '../../../src/features/types';
 import config from '../../../src/config';
 
@@ -246,6 +246,35 @@ describe('webex.cc', () => {
       expect(webex.logger.error).toHaveBeenCalledWith(
         `file: cc: Error during register: ${mockError}`
       );
+    });
+  });
+
+  describe('stationLogout', () => {
+    it('should logout successfully', async () => {
+      const data = {logoutReason: 'Logout reason'};
+      const response = '';
+
+      const stationLogoutMock = jest
+        .spyOn(webex.cc.agent, 'stationLogout')
+        .mockResolvedValue({} as StationLogoutSuccess);
+
+      webex.cc.agent.stationLogout.mockResolvedValue(response);
+
+      const result = await webex.cc.stationLogout(data);
+
+      expect(stationLogoutMock).toHaveBeenCalledWith(data);
+      expect(result).toEqual(response);
+    });
+
+    it('should handle error during stationLogout', async () => {
+      const data = {logoutReason: 'Logout reason'};
+      const error = new Error('Logout failed');
+
+      jest.spyOn(webex.cc.agent, 'stationLogout').mockRejectedValue(error);
+
+      await expect(webex.cc.stationLogout(data)).rejects.toThrow(error);
+
+      expect(webex.logger.error).toHaveBeenCalledWith(`file: cc: Station logout failed: ${error}`);
     });
   });
 });

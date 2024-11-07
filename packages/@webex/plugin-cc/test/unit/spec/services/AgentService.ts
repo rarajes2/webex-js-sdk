@@ -6,6 +6,10 @@ import {
   AGENT,
   WCC_API_GATEWAY,
   LOGIN_API,
+  LOGOUT_API,
+  LOGOUT_EVENT,
+  AGENT_LOGOUT_SUCCESS_EVENT,
+  AGENT_LOGOUT_FAILED_EVENT,
 } from '../../../../src/services/constants';
 import HttpRequest from '../../../../src/services/HttpRequest';
 import {LoginOption, HTTP_METHODS} from '../../../../src/types';
@@ -75,6 +79,43 @@ describe('plugin-cc AgentService tests', () => {
 
       await expect(agentService.stationLogin(options)).rejects.toThrow('Network Error');
       expect(webex.logger.error).toHaveBeenCalledWith(`Error during station login: ${error}`);
+    });
+  });
+
+  describe('AgentService.stationLogout', () => {
+    it('should call sendRequestWithEvent with correct parameters', async () => {
+      const expectedPayload = {
+        logoutReason: 'reason',
+      };
+
+      httpRequestMock.sendRequestWithEvent.mockResolvedValue('response_data');
+
+      const result = await agentService.stationLogout(expectedPayload);
+
+      expect(httpRequestMock.sendRequestWithEvent).toHaveBeenCalledWith({
+        service: WCC_API_GATEWAY,
+        resource: LOGOUT_API,
+        method: HTTP_METHODS.PUT,
+        payload: expectedPayload,
+        eventType: LOGOUT_EVENT,
+        success: [AGENT_LOGOUT_SUCCESS_EVENT],
+        failure: [AGENT_LOGOUT_FAILED_EVENT],
+      });
+
+      expect(result).toBe('response_data');
+      expect(webex.logger.log).toHaveBeenCalledWith('Station logout success');
+    });
+
+    it('should log error and reject the promise on failure', async () => {
+      const options = {
+        logoutReason: 'reason',
+      };
+
+      const error = new Error('Network Error');
+      httpRequestMock.sendRequestWithEvent.mockRejectedValue(error);
+
+      await expect(agentService.stationLogout(options)).rejects.toThrow('Network Error');
+      expect(webex.logger.error).toHaveBeenCalledWith(`Station logout failed: ${error}`);
     });
   });
 });

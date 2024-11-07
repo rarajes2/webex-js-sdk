@@ -2,7 +2,7 @@ import {LoginOption, WebexSDK} from '../types';
 import HttpRequest from '../services/HttpRequest';
 import AgentService from '../services/AgentService';
 import {AgentLogin} from '../services/types';
-import {AgentLoginRequest, LogoutSuccess} from '../services/types';
+import {StationLogoutResponse} from '../services/types';
 import {StationLoginResponse} from './types';
 import {AGENT, WEB_RTC_PREFIX} from '../services/constants';
 
@@ -39,14 +39,7 @@ export default class Agent {
     return loginResponse;
   }
 
-  public async stationLogout(options: {logoutReason: string}): Promise<LogoutSuccess> {
-    try {
-      const response = await this.agentService.stationLogout(options);
-      this.webex.logger.log('Logout API SUCCESS');
-
-      return response;
-    } catch (error) {
-      return Promise.reject(error);
-    }
+  public async stationLogout(data: {logoutReason: string}): Promise<StationLogoutResponse> {
+    return this.agentService.stationLogout(data);
   }
 }
