@@ -6,17 +6,8 @@ import '@webex/internal-plugin-device';
 import '@webex/internal-plugin-feature';
 import '@webex/internal-plugin-metrics';
 
-import {registerInternalPlugin} from '@webex/webex-core';
-
-import Mercury from './mercury';
-import config from './config';
-
-registerInternalPlugin('mercury', Mercury, {
-  config,
-  onBeforeLogout() {
-    return this.logout();
-  },
-});
+// import Mercury from './mercury';
+// import config from './config';
 
 export {default} from './mercury';
 export {default as Mercury} from './mercury';
